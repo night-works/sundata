@@ -1,6 +1,8 @@
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,timezone
 from enum import Enum
+from suntime import Sun
+import pytz
 
 import astropy.coordinates as coord
 import astropy.units as u
@@ -20,7 +22,35 @@ class LightPeriod(Enum):
     CIVIL = 3
     DAY = 4
 
+class LightingInformation():
+    sunrise:datetime
+    sunset:datetime
+    location:Position
+    set_date:datetime
+    utc = pytz.UTC
 
+    def __init__(self,position:Position,a_datetime:datetime) -> None:
+        self.location = position
+        self.set_date = a_datetime.astimezone(self.utc)
+        
+    def calculate(self,lighting_period:LightPeriod = LightPeriod.DAY):
+        sun = Sun(self.location.latitude,self.location.longitude)
+        self.sunrise = sun.get_local_sunrise_time(self.set_date).astimezone(self.utc)
+        sunrise_angle = get_sun_altitude(self.location,self.sunrise)
+        if sunrise_angle < 0 and lighting_period == LightPeriod.DAY:
+            self.sunrise = get_lighting_period_after(self.location,self.sunrise,lighting_period)
+        else:
+            self.sunrise = get_lighting_period_before(self.location,self.sunrise,lighting_period)
+            
+        self.sunset = sun.get_local_sunset_time(self.set_date).astimezone(self.utc)
+        sunset_angle = get_sun_altitude(self.location,self.sunset)
+        
+        if sunset_angle < 0 and lighting_period == LightPeriod.DAY:
+            self.sunset = get_lighting_period_before(self.location,self.sunset,lighting_period)
+        else:
+            self.sunset = get_lighting_period_after(self.location,self.sunset,lighting_period)
+            
+   
 def get_sun_altitude(position: Position, when: datetime) -> float:
     earth_location = coord.EarthLocation(
         lon=position.longitude * u.deg, lat=position.latitude * u.deg
