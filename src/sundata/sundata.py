@@ -22,6 +22,7 @@ class LightPeriod(Enum):
     CIVIL = (-0.0000001,-6)
     DAY = (0,200)
 
+    @staticmethod
     def get(value:float):
         for data in LightPeriod:
             low = data.value[0]
