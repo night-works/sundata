@@ -1,11 +1,10 @@
-import astropy.coordinates as coord
-from astropy.coordinates import AltAz, get_sun
-from astropy.time import Time
-import astropy.units as u
-from datetime import datetime
+from dataclasses import dataclass
+from datetime import datetime, timedelta
 from enum import Enum
 
-from dataclasses import dataclass
+import astropy.coordinates as coord
+import astropy.units as u
+from astropy.time import Time
 
 
 @dataclass
@@ -27,8 +26,8 @@ def get_sun_altitude(position: Position, when: datetime) -> float:
         lon=position.longitude * u.deg, lat=position.latitude * u.deg
     )
     when = Time(when, format="datetime", scale="utc")
-    altazframe = AltAz(obstime=when, location=earth_location)
-    sunaltaz = get_sun(when).transform_to(altazframe)
+    altazframe = coord.AltAz(obstime=when, location=earth_location)
+    sunaltaz = coord.get_sun(when).transform_to(altazframe)
     return sunaltaz.alt.max().value
 
 
@@ -43,3 +42,25 @@ def lighting_is(sun_altitude: float) -> LightPeriod:
         return LightPeriod.NAUTICAL
     if sun_altitude < -12 and sun_altitude >= -18:
         return LightPeriod.ASTRO
+
+
+def get_lighting_period_after(
+    position: Position, when: datetime, period: LightPeriod
+) -> datetime:
+    lighting = when
+
+    while period.value != lighting_is(get_sun_altitude(position, lighting)).value:
+        lighting = lighting + timedelta(minutes=1)
+
+    return lighting
+
+
+def get_lighting_period_before(
+    position: Position, when: datetime, period: LightPeriod
+) -> datetime:
+    lighting = when
+
+    while period.value != lighting_is(get_sun_altitude(position, lighting)).value:
+        lighting = lighting - timedelta(minutes=1)
+
+    return lighting
