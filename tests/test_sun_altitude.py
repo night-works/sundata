@@ -1,7 +1,5 @@
 from datetime import datetime
-
-from sundata.sundata import Position, get_sun_altitude, lighting_is
-
+from sundata import Position, get_sun_altitude
 
 def test_get_altitude():
     pos = Position(51.772938, 0.102310)

@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pytz
 
-from sundata.sundata import LightingInformation, LightPeriod, Position
+from sundata import LightingInformation, LightPeriod, Position
 
 zone = pytz.UTC
 

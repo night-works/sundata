@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sundata.sundata import (
+from sundata import (
     LightPeriod,
     Position,
     get_lighting_period_after,

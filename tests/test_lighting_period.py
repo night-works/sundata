@@ -1,6 +1,6 @@
 import pytest
 
-from sundata.sundata import LightPeriod, lighting_is
+from sundata import LightPeriod, lighting_is
 
 
 @pytest.mark.parametrize("angles", [0, 1, 2, 3, 4, 10, 20, 30, 40, 50])
