@@ -16,7 +16,7 @@ def test_default_sunrise_sunset():
     assert data.sunset == datetime(2023, 2, 13, 17, 3).astimezone(zone)
 
 
-def test_default_sunrise_sunset_DAYLIGHT():
+def test_default_sunrise_sunset_daylight():
     position = Position(51.772938, 0.102310)
     a_date = datetime(2023, 2, 13, 12, 00)
     data = LightingInformation(position, a_date)
@@ -25,7 +25,7 @@ def test_default_sunrise_sunset_DAYLIGHT():
     assert data.sunset == datetime(2023, 2, 13, 17, 3).astimezone(zone)
 
 
-def test_default_sunrise_sunset_CIVIL():
+def test_default_sunrise_sunset_civil():
     position = Position(51.772938, 0.102310)
     a_date = datetime(2023, 2, 13, 12, 00)
     data = LightingInformation(position, a_date)
@@ -34,7 +34,7 @@ def test_default_sunrise_sunset_CIVIL():
     assert data.sunset == datetime(2023, 2, 13, 17, 10).astimezone(zone)
 
 
-def test_default_sunrise_sunset_():
+def test_default_sunrise_sunset_nautical():
     position = Position(51.772938, 0.102310)
     a_date = datetime(2023, 2, 13, 12, 00)
     data = LightingInformation(position, a_date)
@@ -43,7 +43,7 @@ def test_default_sunrise_sunset_():
     assert data.sunset == datetime(2023, 2, 13, 17, 45).astimezone(zone)
 
 
-def test_default_sunrise_sunset_():
+def test_default_sunrise_sunset_astro():
     position = Position(51.772938, 0.102310)
     a_date = datetime(2023, 2, 13, 12, 00)
     data = LightingInformation(position, a_date)
@@ -52,7 +52,7 @@ def test_default_sunrise_sunset_():
     assert data.sunset == datetime(2023, 2, 13, 18, 25).astimezone(zone)
 
 
-def test_default_sunrise_sunset_():
+def test_default_sunrise_sunset_night():
     position = Position(51.772938, 0.102310)
     a_date = datetime(2023, 2, 13, 12, 00)
     data = LightingInformation(position, a_date)
