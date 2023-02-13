@@ -16,12 +16,19 @@ class Position:
 
 
 class LightPeriod(Enum):
-    NIGHT = 0
-    ASTRO = 1
-    NAUTICAL = 2
-    CIVIL = 3
-    DAY = 4
+    NIGHT = (-18.0000000001,-200.0)
+    ASTRO = (-12.0000001,-18)
+    NAUTICAL = (-6.00000001,-11.999999999)
+    CIVIL = (-0.0000001,-6)
+    DAY = (0,200)
 
+    def get(value:float):
+        for data in LightPeriod:
+            low = data.value[0]
+            high = data.value[1]
+            if value <= low and value >= high:
+                return data
+        return LightPeriod.DAY
 
 class LightingInformation:
     sunrise: datetime
@@ -69,26 +76,12 @@ def get_sun_altitude(position: Position, when: datetime) -> float:
     sunaltaz = coord.get_sun(when).transform_to(altazframe)
     return sunaltaz.alt.max().value
 
-
-def lighting_is(sun_altitude: float) -> LightPeriod:
-    if sun_altitude >= 0:
-        return LightPeriod.DAY
-    if sun_altitude < -18:
-        return LightPeriod.NIGHT
-    if sun_altitude < 0 and sun_altitude >= -6:
-        return LightPeriod.CIVIL
-    if sun_altitude < -6 and sun_altitude >= -12:
-        return LightPeriod.NAUTICAL
-    if sun_altitude < -12 and sun_altitude >= -18:
-        return LightPeriod.ASTRO
-
-
 def get_lighting_period_after(
     position: Position, when: datetime, period: LightPeriod
 ) -> datetime:
     lighting = when
 
-    while period.value != lighting_is(get_sun_altitude(position, lighting)).value:
+    while period != LightPeriod.get(get_sun_altitude(position, lighting)):
         lighting = lighting + timedelta(minutes=1)
 
     return lighting
@@ -99,7 +92,9 @@ def get_lighting_period_before(
 ) -> datetime:
     lighting = when
 
-    while period.value != lighting_is(get_sun_altitude(position, lighting)).value:
+    while period != LightPeriod.get(get_sun_altitude(position, lighting)):
         lighting = lighting - timedelta(minutes=1)
 
     return lighting
+
+
