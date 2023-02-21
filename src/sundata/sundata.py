@@ -27,7 +27,7 @@ class LightPeriod(Enum):
         for data in LightPeriod:
             low = data.value[0]
             high = data.value[1]
-            if value <= low and value >= high:
+            if low >= value >= high:
                 return data
         return LightPeriod.DAY
 
@@ -74,9 +74,9 @@ def get_sun_altitude(position: Position, when: datetime) -> float:
         lon=position.longitude * u.deg, lat=position.latitude * u.deg
     )
     when = Time(when, format="datetime", scale="utc")
-    altazframe = coord.AltAz(obstime=when, location=earth_location)
-    sunaltaz = coord.get_sun(when).transform_to(altazframe)
-    return sunaltaz.alt.max().value
+    alt_frame = coord.AltAz(obstime=when, location=earth_location)
+    sun_alt = coord.get_sun(when).transform_to(alt_frame)
+    return sun_alt.alt.max().value
 
 
 def get_lighting_period_after(
