@@ -18,8 +18,8 @@ Write about 1-2 paragraphs describing the purpose of your project.
 
 - Light/dark mode toggle
 - Live previews
-- Fullscreen mode
-- Cross platform
+- Full-screen mode
+- Cross-platform
 
 ## Getting Started
 Write about 1-2 paragraphs describing the purpose of your project.
@@ -43,8 +43,9 @@ Write about 1-2 paragraphs describing the purpose of your project.
  - [Link](https://example.com) 
 
 ## License
+
 Licensed under the MIT.
-Copyright 2023 Night Works. [Copy of the license](LICENSE.md).
+Copyright 2023 Night Works. [Copy of the license](LICENCE).
 
 A list of the Licenses of the dependencies of the project can be found at
 the bottom of the [Libraries Summary](https://libraries.io/pypi/sundata).

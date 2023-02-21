@@ -2,9 +2,9 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
 
-import astropy.coordinates as coord
-import astropy.units as u
 import pytz
+from astropy import coordinates
+from astropy import units
 from astropy.time import Time
 from suntime import Sun
 
@@ -70,18 +70,16 @@ class LightingInformation:
 
 
 def get_sun_altitude(position: Position, when: datetime) -> float:
-    earth_location = coord.EarthLocation(
-        lon=position.longitude * u.deg, lat=position.latitude * u.deg
+    earth_location = coordinates.EarthLocation(
+        lon=position.longitude * units.deg, lat=position.latitude * units.deg
     )
     when = Time(when, format="datetime", scale="utc")
-    alt_frame = coord.AltAz(obstime=when, location=earth_location)
-    sun_alt = coord.get_sun(when).transform_to(alt_frame)
+    alt_frame = coordinates.AltAz(obstime=when, location=earth_location)
+    sun_alt = coordinates.get_sun(when).transform_to(alt_frame)
     return sun_alt.alt.max().value
 
 
-def get_lighting_period_after(
-    position: Position, when: datetime, period: LightPeriod
-) -> datetime:
+def get_lighting_period_after(position: Position, when: datetime, period: LightPeriod) -> datetime:
     lighting = when
 
     while period != LightPeriod.get(get_sun_altitude(position, lighting)):
@@ -90,9 +88,7 @@ def get_lighting_period_after(
     return lighting
 
 
-def get_lighting_period_before(
-    position: Position, when: datetime, period: LightPeriod
-) -> datetime:
+def get_lighting_period_before(position: Position, when: datetime, period: LightPeriod) -> datetime:
     lighting = when
 
     while period != LightPeriod.get(get_sun_altitude(position, lighting)):
