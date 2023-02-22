@@ -69,29 +69,25 @@ class LightingInformation:
             )
 
 
-def get_sun_altitude(position: Position, when: datetime) -> float:
+def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
     earth_location = coordinates.EarthLocation(
         lon=position.longitude * units.deg, lat=position.latitude * units.deg
     )
-    when = Time(when, format="datetime", scale="utc")
-    alt_frame = coordinates.AltAz(obstime=when, location=earth_location)
-    sun_alt = coordinates.get_sun(when).transform_to(alt_frame)
+    a_datetime = Time(a_datetime, format="datetime", scale="utc")
+    alt_frame = coordinates.AltAz(obstime=a_datetime, location=earth_location)
+    sun_alt = coordinates.get_sun(a_datetime).transform_to(alt_frame)
     return sun_alt.alt.max().value
 
 
-def get_lighting_period_after(position: Position, when: datetime, period: LightPeriod) -> datetime:
-    lighting = when
+def get_lighting_period_after(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
+    while period != LightPeriod.get(get_sun_altitude(position, a_datetime)):
+        a_datetime = a_datetime + timedelta(minutes=1)
 
-    while period != LightPeriod.get(get_sun_altitude(position, lighting)):
-        lighting = lighting + timedelta(minutes=1)
-
-    return lighting
+    return a_datetime
 
 
-def get_lighting_period_before(position: Position, when: datetime, period: LightPeriod) -> datetime:
-    lighting = when
+def get_lighting_period_before(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
+    while period != LightPeriod.get(get_sun_altitude(position, a_datetime)):
+        a_datetime = a_datetime - timedelta(minutes=1)
 
-    while period != LightPeriod.get(get_sun_altitude(position, lighting)):
-        lighting = lighting - timedelta(minutes=1)
-
-    return lighting
+    return a_datetime
