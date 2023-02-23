@@ -36,7 +36,7 @@ To get only the sunrise and sunset for a given date time the following will be e
 ```python
 position = Position(51.772938, 0.102310)
 a_date = datetime(2023, 2, 13, 12, 00)
-data = LightingInformation(position, a_date)
+data = SunData(position, a_date)
 data.calculate_sun_data()
 sunrise = data.sunrise
 sunset = data.sunset
@@ -47,8 +47,9 @@ method.
 
 ```python
 pos = Position(51.772938, 0.102310)
-sunset = datetime(2023, 2, 12, 17, 7)
-night_start = get_lighting_period_after(pos, sunset, LightPeriod.NIGHT)
+current_datetime = datetime(2023, 2, 12, 17, 7)
+data = SunData(position, current_datetime)
+data.calculate_sun_data(LightPeriod.NIGHT)
 sunrise = data.sunrise
 sunset = data.sunset
 ```
