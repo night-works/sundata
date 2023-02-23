@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from enum import Enum
+from typing import Tuple
 
 import pytz
 from astropy import coordinates
@@ -12,15 +13,15 @@ from suntime import Sun
 @dataclass
 class Position:
     """
-
+    Represents a location on Earth surface as a latitude and longitude
     """
     latitude: float
     longitude: float
 
 
 class LightPeriod(Enum):
-    """
-
+    f"""
+    An {Enum} that represents the various lighting scenarios during a day.
     """
     NIGHT = (-18.0000000001, -200.0)
     ASTRO = (-12.0000001, -18)
@@ -30,12 +31,12 @@ class LightPeriod(Enum):
 
     @staticmethod
     def get(value: float):
-        """
-
+        f"""
+        Get the {LightPeriod} that the {float} falls within otherwise {LightPeriod.DAY} is returned
         Args:
-            value:
+            value:  a {float} representation of an altitude
 
-        Returns:
+        Returns: the {LightPeriod} that the {float} falls within otherwise {LightPeriod.DAY} is returned
 
         """
         for data in LightPeriod:
@@ -46,9 +47,10 @@ class LightPeriod(Enum):
         return LightPeriod.DAY
 
 
-class LightingInformation:
-    """
-
+class SunData:
+    f"""
+    For a give {Position} and {datetime} calculate the sunrise and sunset {datetime} allowing for the shift of those 
+    to other lighting scenarios for example get the time when the sun would be entering {LightPeriod.CIVIL}
     """
     sunrise: datetime
     sunset: datetime
@@ -57,20 +59,26 @@ class LightingInformation:
     utc = pytz.UTC
 
     def __init__(self, position: Position, a_datetime: datetime) -> None:
-        """
-
+        f"""
+        {SunData} constructor for the required information to calculate the sunrise and sunset with various
+        lighting scenarios {LightPeriod}
         Args:
-            position:
-            a_datetime:
+            position: a {Position} on the earth to base calculations from
+            a_datetime: a fixed {datetime} to use for the basis of further calculations
         """
         self.location = position
         self.set_date = a_datetime.astimezone(self.utc)
 
-    def calculate(self, lighting_period: LightPeriod = LightPeriod.DAY):
-        """
+    def calculate_sun_data(self, lighting_period: LightPeriod = LightPeriod.DAY) -> Tuple[datetime, datetime]:
+        f"""
+        Perform the calculations and modifications of the sunrise and sunset for a given optional {LightPeriod} if no 
+        {LightPeriod} is provided then the default of {LightPeriod.DAY} is used which would result in the standard 
+        definition of sunrise and sunset for the position on the Earth of the provided date.
+        Args:
+            lighting_period:
 
-        Returns:
-            object: 
+        Returns: {Tuple} of calculated Sunrise and Sunset as {datetime} objects
+
         """
         sun = Sun(self.location.latitude, self.location.longitude)
         self.sunrise = sun.get_local_sunrise_time(self.set_date).astimezone(self.utc)
@@ -96,15 +104,18 @@ class LightingInformation:
                 self.location, self.sunset, lighting_period
             )
 
+        return self.sunrise, self.sunset
+
 
 def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
-    """
-
+    f"""
+    For a give {Position} and a {datetime} calculate the altitude of the Sun relative to the Earth Horizon. Note that a
+    negative number will mean that the sun is below the Horizon, this is represented as a {float}
     Args:
-        position:
-        a_datetime:
+        position: location on the earth with a latitude and longitude {Position}
+        a_datetime: the {datetime} to get the sun altitude from
 
-    Returns:
+    Returns: the altitude {float} of the sun position relative to the horizon negative numbers are below horizon
 
     """
     earth_location = coordinates.EarthLocation(
@@ -117,14 +128,14 @@ def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
 
 
 def get_lighting_period_after(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
-    """
+    f"""
 
     Args:
-        position:
-        a_datetime:
+        position: location on the earth with a latitude and longitude {Position}
+        a_datetime: the {datetime} to get the sun altitude from
         period:
 
-    Returns:
+    Returns: the {datetime} of when the requested {LightPeriod} starts after the given {Position} and {datetime}
 
     """
     while period != LightPeriod.get(get_sun_altitude(position, a_datetime)):
@@ -134,14 +145,14 @@ def get_lighting_period_after(position: Position, a_datetime: datetime, period: 
 
 
 def get_lighting_period_before(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
-    """
+    f"""
 
-    Args:
-        position:
-        a_datetime:
-        period:
+        Args:
+            position: location on the earth with a latitude and longitude {Position}
+            a_datetime: the {datetime} to get the sun altitude from
+            period:
 
-    Returns:
+        Returns: the {datetime} of when the requested {LightPeriod} ends after the given {Position} and {datetime}
 
     """
     while period != LightPeriod.get(get_sun_altitude(position, a_datetime)):

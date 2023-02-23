@@ -1,9 +1,12 @@
 import pytest
+import pytest
 
 from src.sundata import LightPeriod
 
 
+
 @pytest.mark.parametrize("angles", [0, 1, 2, 3, 4, 10, 20, 30, 40, 50])
+@pytest.mark.timeout(5)
 def test_get_day(angles):
     assert LightPeriod.get(angles) == LightPeriod.DAY
 
