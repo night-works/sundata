@@ -33,6 +33,7 @@ class LightPeriod(Enum):
     def get(value: float):
         f"""
         Get the {LightPeriod} that the {float} falls within otherwise {LightPeriod.DAY} is returned
+        
         Args:
             value:  a {float} representation of an altitude
 
@@ -62,6 +63,7 @@ class SunData:
         f"""
         {SunData} constructor for the required information to calculate the sunrise and sunset with various
         lighting scenarios {LightPeriod}
+       
         Args:
             position: a {Position} on the earth to base calculations from
             a_datetime: a fixed {datetime} to use for the basis of further calculations
@@ -74,6 +76,7 @@ class SunData:
         Perform the calculations and modifications of the sunrise and sunset for a given optional {LightPeriod} if no 
         {LightPeriod} is provided then the default of {LightPeriod.DAY} is used which would result in the standard 
         definition of sunrise and sunset for the position on the Earth of the provided date.
+        
         Args:
             lighting_period:
 
@@ -111,6 +114,7 @@ def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
     f"""
     For a give {Position} and a {datetime} calculate the altitude of the Sun relative to the Earth Horizon. Note that a
     negative number will mean that the sun is below the Horizon, this is represented as a {float}
+    
     Args:
         position: location on the earth with a latitude and longitude {Position}
         a_datetime: the {datetime} to get the sun altitude from
@@ -118,9 +122,9 @@ def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
     Returns: the altitude {float} of the sun position relative to the horizon negative numbers are below horizon
 
     """
-    earth_location = coordinates.EarthLocation(
-        lon=position.longitude * units.deg, lat=position.latitude * units.deg
-    )
+    latitude = position.latitude * units.deg
+    longitude = position.longitude * units.deg
+    earth_location = coordinates.EarthLocation(lon=longitude, lat=latitude)
     a_datetime = Time(a_datetime, format="datetime", scale="utc")
     alt_frame = coordinates.AltAz(obstime=a_datetime, location=earth_location)
     sun_alt = coordinates.get_sun(a_datetime).transform_to(alt_frame)
@@ -129,7 +133,9 @@ def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
 
 def get_lighting_period_after(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
     f"""
-
+    Find the start of the next {LightPeriod} after the passed {datetime}. If the {datetime} is currently within the 
+    requested {LightPeriod} then returns with current {datetime}
+    
     Args:
         position: location on the earth with a latitude and longitude {Position}
         a_datetime: the {datetime} to get the sun altitude from
@@ -146,13 +152,15 @@ def get_lighting_period_after(position: Position, a_datetime: datetime, period: 
 
 def get_lighting_period_before(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
     f"""
+    Find the start of the next {LightPeriod} before the passed {datetime}. If the {datetime} is currently within the 
+    requested {LightPeriod} then returns with current {datetime}
+        
+    Args:
+        position: location on the earth with a latitude and longitude {Position}
+        a_datetime: the {datetime} to get the sun altitude from
+        period: the {LightPeriod} to seek
 
-        Args:
-            position: location on the earth with a latitude and longitude {Position}
-            a_datetime: the {datetime} to get the sun altitude from
-            period:
-
-        Returns: the {datetime} of when the requested {LightPeriod} ends after the given {Position} and {datetime}
+    Returns: the {datetime} of when the requested {LightPeriod} ends after the given {Position} and {datetime}
 
     """
     while period != LightPeriod.get(get_sun_altitude(position, a_datetime)):
