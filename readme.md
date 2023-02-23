@@ -9,38 +9,75 @@
 
 # Sun Data
 
-Brief project description 2-3 sentences.
-
-## About
-Write about 1-2 paragraphs describing the purpose of your project.
+Simple module to get the angle of the Sun relative to the Horizon for a given geographic location and datetime. Also
+allow for the gathering of sunrise and sunset for a given geographical location and datetime, with the option to shift
+those to general lighting conditions rather than sunset but instead Astro Night, Night for example.
 
 ## Features
 
-- Light/dark mode toggle
-- Live previews
-- Full-screen mode
-- Cross-platform
-
-## Getting Started
-Write about 1-2 paragraphs describing the purpose of your project.
+- Angle of Sun for given location and date time
+- Get modified datetime for location when sun enters different lighting conditions
 
 ## Installing
-Write about 1-2 paragraphs describing the purpose of your project.
+
+Install using pip into your python virtual environment.
+
+```console
+pip install sundata
+```
 
 ## Usage
-Write about 1-2 paragraphs describing the purpose of your project.
+
+Before using sundata to get the lighting information you'll require a location __latitude__ and __longitude__ as well a
+datetime in order to perform the calculation.
+
+To get only the sunrise and sunset for a given date time the following will be enough.
+
+```python
+position = Position(51.772938, 0.102310)
+a_date = datetime(2023, 2, 13, 12, 00)
+data = LightingInformation(position, a_date)
+data.calculate()
+sunrise = data.sunrise
+sunset = data.sunset
+```
+
+To get the lighting periods around sunrise and sunset then a __LightPeriod__ needs to be passed into the calculation
+method.
+
+```python
+pos = Position(51.772938, 0.102310)
+sunset = datetime(2023, 2, 12, 17, 7)
+night_start = get_lighting_period_after(pos, sunset, LightPeriod.NIGHT)
+sunrise = data.sunrise
+sunset = data.sunset
+```
+
+Sunset and Sunrise datetimes have now been shifted to the start of Night and end of Night.
 
 ## Running Tests
-Write about 1-2 paragraphs describing the purpose of your project.
+
+Module uses pytest and pytest-cov for coverage. To run the tests
+
+```console
+pytest 
+```
+
+To run the tests with coverage
+
+```console
+pytest --cov=src
+```
 
 ## Contributing
-Write about 1-2 paragraphs describing the purpose of your project.
+
+Please first raise an issue then fork the repository referencing the issue in commits and raise a Pull Request.
 
 ## Acknowledgements
 
- - [Link](https://example.com)
- - [Link](https://example.com)
- - [Link](https://example.com) 
+- [Link](https://example.com)
+- [Link](https://example.com)
+- [Link](https://example.com)
 
 ## License
 

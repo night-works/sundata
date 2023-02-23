@@ -11,11 +11,17 @@ from suntime import Sun
 
 @dataclass
 class Position:
+    """
+
+    """
     latitude: float
     longitude: float
 
 
 class LightPeriod(Enum):
+    """
+
+    """
     NIGHT = (-18.0000000001, -200.0)
     ASTRO = (-12.0000001, -18)
     NAUTICAL = (-6.00000001, -11.999999999)
@@ -24,6 +30,14 @@ class LightPeriod(Enum):
 
     @staticmethod
     def get(value: float):
+        """
+
+        Args:
+            value:
+
+        Returns:
+
+        """
         for data in LightPeriod:
             low = data.value[0]
             high = data.value[1]
@@ -33,6 +47,9 @@ class LightPeriod(Enum):
 
 
 class LightingInformation:
+    """
+
+    """
     sunrise: datetime
     sunset: datetime
     location: Position
@@ -40,10 +57,21 @@ class LightingInformation:
     utc = pytz.UTC
 
     def __init__(self, position: Position, a_datetime: datetime) -> None:
+        """
+
+        Args:
+            position:
+            a_datetime:
+        """
         self.location = position
         self.set_date = a_datetime.astimezone(self.utc)
 
     def calculate(self, lighting_period: LightPeriod = LightPeriod.DAY):
+        """
+
+        Returns:
+            object: 
+        """
         sun = Sun(self.location.latitude, self.location.longitude)
         self.sunrise = sun.get_local_sunrise_time(self.set_date).astimezone(self.utc)
         sunrise_angle = get_sun_altitude(self.location, self.sunrise)
@@ -70,6 +98,15 @@ class LightingInformation:
 
 
 def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
+    """
+
+    Args:
+        position:
+        a_datetime:
+
+    Returns:
+
+    """
     earth_location = coordinates.EarthLocation(
         lon=position.longitude * units.deg, lat=position.latitude * units.deg
     )
@@ -80,6 +117,16 @@ def get_sun_altitude(position: Position, a_datetime: datetime) -> float:
 
 
 def get_lighting_period_after(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
+    """
+
+    Args:
+        position:
+        a_datetime:
+        period:
+
+    Returns:
+
+    """
     while period != LightPeriod.get(get_sun_altitude(position, a_datetime)):
         a_datetime = a_datetime + timedelta(minutes=1)
 
@@ -87,6 +134,16 @@ def get_lighting_period_after(position: Position, a_datetime: datetime, period: 
 
 
 def get_lighting_period_before(position: Position, a_datetime: datetime, period: LightPeriod) -> datetime:
+    """
+
+    Args:
+        position:
+        a_datetime:
+        period:
+
+    Returns:
+
+    """
     while period != LightPeriod.get(get_sun_altitude(position, a_datetime)):
         a_datetime = a_datetime - timedelta(minutes=1)
 
